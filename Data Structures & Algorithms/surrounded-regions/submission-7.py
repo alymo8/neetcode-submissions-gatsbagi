@@ -1,0 +1,31 @@
+class Solution:
+
+    def update_group(self, i, j, rows, cols, board, border_connected):
+        border_connected[i][j] = 1
+        for di, dj in [(i+1, j), (i-1, j), (i, j+1), (i, j-1)]:
+            if 0 <= di < rows and 0 <= dj < cols and board[di][dj] == 'O' and border_connected[di][dj] == 0:
+                self.update_group(di, dj, rows, cols, board, border_connected)
+
+    def solve(self, board: List[List[str]]) -> None:
+        rows = len(board)
+        cols = len(board[0])
+        if rows < 2 or cols < 2:
+            return
+
+        border_connected = [[0 for _ in range(cols)] for _ in range(rows)]
+
+        for i in [0, rows-1]:
+            for j in range(0, cols):
+                if board[i][j] == "O":
+                    self.update_group(i, j, rows, cols, board, border_connected)
+        for j in [0, cols-1]:
+            for i in range(0, rows):
+                if board[i][j] == "O":
+                    border_connected[i][j] = 1
+                    self.update_group(i, j, rows, cols, board, border_connected)
+
+
+        for i in range(1, rows - 1):
+            for j in range(1, cols - 1):
+                if board[i][j] == "O" and border_connected[i][j] == 0:
+                    board[i][j] = "X"
